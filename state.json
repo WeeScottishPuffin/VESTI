@@ -1,0 +1,39 @@
+{
+  "cars":[
+    {
+     "plate":"BAN ONE",
+     "model":"Firebird ('77)",
+     "brand":"Pontiac",
+     "colour":"Black"
+    },  
+    {
+     "plate":"LU 6789",
+     "model":"DB5",
+     "brand":"Aston Martin",
+     "colour":"Silver"
+    },  
+    {
+     "plate":"XAB 235",
+     "model":"Mustang ('69)",
+     "brand":"Ford",
+     "colour":"Silver"
+    },  
+    {
+     "plate":"OUTATIME",
+     "model":"DeLorean",
+     "brand":"DMC",
+     "colour":"Silver"
+    },  
+    {
+     "plate":"1971",
+     "model":"Duster 340 ('71)",
+     "brand":"Plymouth",
+     "colour":"Green"
+    }
+  ],
+  "garages":[
+    {"cap":5},
+    {"cap":4},
+    {"cap":7}
+  ]
+}
