@@ -50,7 +50,7 @@ class Garage:
   def checkIfValid(self, car:Car, lisence:Lisence) -> bool:
     return (len(self.parkedCars) < self.maxCapacity 
            and lisence.getLisenceHolderPlate() == car 
-           and lisence.getValidInGarageId == self.getId())
+           and lisence.getValidInGarageId() == self.getId())
     
   def parkCar(self, car:Car) -> bool: #Return type is bool in the casus
     try:

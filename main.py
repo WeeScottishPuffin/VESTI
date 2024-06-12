@@ -24,7 +24,7 @@ with open("state.json", "r") as f:
 
 #Save data from state.json to the lists
 for car in state["cars"]:
-	CARS.append(interface.Car(car["plate"], car["brand"], car["model"], car["colour"]))
+	CARS.append(interface.Car(car["plate"].upper().replace(" ",""), car["brand"], car["model"], car["colour"]))
 for garage in state["garages"]: 
 	n = interface.Garage([], garage["cap"])
 	GARAGES.append(n)
@@ -82,13 +82,16 @@ while running:
 				if args[0] == "-c":
 					#selecting a car by lisence
 					if args[1]: 
+						s = True
+						args[1]=args[1].upper()
 						for car in CARS:
 							if car.getLisencePlate() == args[1]: 
 								selectedCar = car
 								print("Succesfully selected car with lisence: %s"%args[1])
+								s = False
 								print(selectedCar.__dict__) #temporary
 								break #To escape the for loop
-							print("Unable to find car with lisence: %s"%args[1])
+						if s:print("Unable to find car with lisence: %s"%args[1])
 					else:
 						print("Invalid number of arguments: %s given, 1 expected." % len(args))
 								
@@ -112,3 +115,31 @@ while running:
 					print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])
 			else:
 				print("Invalid number of arguments: %s given, 2 expected." % len(args))
+
+
+		case "hand":
+			sc,sg = None,None
+			if selectedCar: sc = selectedCar.getLisencePlate()
+			if selectedGarage: sg = selectedGarage.getId()
+			print("Selected Car: %s" % sc)
+			print("Selected Garage: %s" % sg)
+
+		case "clear": clear()
+
+		case "list":
+			if len(args) > 0:
+				if args[0] == "-c":
+					print("PLATE","MODEL","BRAND","COLOUR",sep=10*" ")
+					for car in CARS:
+						pla,mod,bra,col=car.getLisencePlate()[:14],car.getModel()[:14],car.getBrand()[:14],car.getColour()[:15]
+						print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="")
+					lx=54-len(str(len(CARS)))	
+					if lx%2 == 0: print("-"*int(lx/2),"%s TOTAL"%len(CARS),"-"*int(lx/2),sep="")
+					else: print("-"*int(lx/2),"%s TOTAL-"%len(CARS),"-"*int(lx/2),sep="")
+				elif args[0] == "-g":
+					for garage in GARAGES:
+						print("%s: (%s/%s)"%(garage.getId(),garage.getCapacity(),garage.maxCapacity))
+				else:
+					print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])
+			else:
+				print("Invalid number of arguments: %s given, 1 expected." % len(args))
