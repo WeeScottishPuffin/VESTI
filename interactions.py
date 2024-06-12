@@ -34,7 +34,6 @@ class Lisence:
     lisenceList[lisenceHolder] = self #Workaround
 
   def getLisenceHolderPlate(self) -> Car:
-    print(self.lisenceHolder)
     return self.lisenceHolder.getLisencePlate()
 
   def getValidInGarageId(self) -> int:

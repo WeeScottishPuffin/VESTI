@@ -88,7 +88,6 @@ while running:
 								selectedCar = car
 								print("Succesfully selected car with lisence: %s"%args[1])
 								s = False
-								print(selectedCar.__dict__) #temporary
 								break #To escape the for loop
 						if s:print("Unable to find car with lisence: %s"%args[1])
 					else:
@@ -105,7 +104,6 @@ while running:
 							if id in gdict.keys():
 								selectedGarage = gdict[id]
 								print("Succesfully selected garage with ID: %s"%args[1])
-								print(selectedGarage.__dict__) #temporary
 							else:
 								print("Unable to find garage with ID: %s"%args[1])
 					else:
@@ -155,7 +153,7 @@ while running:
 					print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="")
 				lx=54-len(str(len(selectedGarage.parkedCars)))	
 				if lx%2 == 0: print("-"*int(lx/2),"%s TOTAL"%len(CARS),"-"*int(lx/2),sep="")
-				else: print("-"*int(lx/2),"%s TOTAL-"%len(CARS),"-"*int(lx/2),sep="")
+				else: print("-"*int(lx/2),"%s TOTAL-"%len(selectedGarage.parkedCars),"-"*int(lx/2),sep="")
 			else:
 				print("No garage selected")
 
@@ -165,5 +163,42 @@ while running:
 				print("MODEL:    %s"%selectedCar.getModel())
 				print("BRAND:    %s"%selectedCar.getBrand())
 				print("COLOUR:   %s"%selectedCar.getColour())
+			else:
+				print("No car selected")
+
+		case "park":
+			if selectedCar:
+				if selectedGarage:
+					print("Trying to park car with plate: %s in garage with ID: %s. Type CONFIRM and press enter to continue."%(selectedCar.getLisencePlate(),selectedGarage.getId()))
+					c = input("> ").upper()
+					if c == "CONFIRM":
+						pt = selectedGarage.parkCar(selectedCar)
+						if pt:
+							print("Car with plate %s succesfully parked in garage with ID %s" %(selectedCar.getLisencePlate(),selectedGarage.getId()))
+						else:
+							if selectedGarage.getCapacity() == selectedGarage.maxCapacity: print("Unable to park car: garage with ID %s is full" %selectedGarage.getId())
+							else: print("Unable to park car: lisence of car with plate %s is not valid" %selectedCar.getLisencePlate())
+					else:
+						print("Aborting.")
+				else:
+					print("No garage selected")
+			else:
+				print("No car selected")
+
+		case "unpark":
+			if selectedCar:
+				if selectedGarage:
+					if selectedCar in selectedGarage.parkedCars:
+						print("Trying to unpark car with plate: %s from garage with ID: %s. Type CONFIRM and press enter to continue."%(selectedCar.getLisencePlate(),selectedGarage.getId()))
+						c = input("> ").upper()
+						if c == "CONFIRM":
+							selectedGarage.unparkCar(selectedCar)
+							print("Car with plate %s succesfully removed from garage with ID %s" %(selectedCar.getLisencePlate(),selectedGarage.getId()))
+						else:
+							print("Aborting.")
+					else:
+						print("Unable to unpark car: car with plate %s is not parked in garage with ID %s"%(selectedCar.getLisencePlate(),selectedGarage.getId()))
+				else:
+					print("No garage selected")
 			else:
 				print("No car selected")
