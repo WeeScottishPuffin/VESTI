@@ -63,91 +63,89 @@ while running:
 	args: list = ioIN[1:]																																#The arguments of the command
 
 	#Match-Case structure to 'parse commands'
-	#Will add more comments when I'm done
 	match cmd:
+        #Quit
 		case "quit" | "exit":
-			running = False
-			print("До свидания!")
+			running = False #Change running flag to false
+			print("До свидания!") #Goodbye )
 			time.sleep(1)
-
+        #Help message
 		case "help":
-			if args: print(HELP[args[0]])
-			else:
+			if args: #the user specified a command
+				if args[0] in HELP.keys(): #Check if the user entered a valid command
+					print(HELP[args[0]]) #Print the corresponding help message
+			else: #If not, print a list of commands
 				for msg in HELP.values():
 					print(msg, "\n")
-
+		#Select a car or a garage
 		case "select":
-			if args and len(args) > 1:
+			if args and len(args) > 1: #Check if the user specified 2 or more arguments. Any args after the 2nd get ignored
 				if args[0] == "-c":
 					#selecting a car by lisence
-					if args[1]: 
-						s = True
-						args[1]=args[1].upper()
+					if args[1]: #Redundant check for the 2nd argument
+						s = True #Keep track if a match was found. True == no match found
+						args[1]=args[1].upper()	#Plates get converted to upper case, so should the query
 						for car in CARS:
 							if car.getLisencePlate() == args[1]: 
 								selectedCar = car
 								print("Succesfully selected car with lisence: %s"%args[1])
-								s = False
-								break #To escape the for loop
-						if s:print("Unable to find car with lisence: %s"%args[1])
-					else:
+								s = False #Indicate we found a match
+								break #To escape the for loop, match-case statements have no fallthrough
+						if s:print("Unable to find car with lisence: %s"%args[1]) #If the flag is still true, we haven't found a match
+					else: #error message
 						print("Invalid number of arguments: %s given, 1 expected." % len(args))
 								
 				elif args[0] == "-g":
 					#Selecting a garage by ID
-					if args[1]:
-						try:
+					if args[1]: #Redundant check for the 2nd argument
+						try: #Need to catch ValueErrors when converting between datatypes
 							id = int(args[1])
-						except ValueError:
+						except ValueError: #Error
 							print("Invalid numerical ID: %s"%args[1])
-						else:
-							if id in gdict.keys():
+						else: #Only executes if no error was triggered
+							if id in gdict.keys(): #Check if the id is present to avoid errors
 								selectedGarage = gdict[id]
 								print("Succesfully selected garage with ID: %s"%args[1])
-							else:
-								print("Unable to find garage with ID: %s"%args[1])
-					else:
-						print("Invalid number of arguments: %s given, 1 expected." % len(args))
-				else:
-					print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])
-			else:
-				print("Invalid number of arguments: %s given, 2 expected." % len(args))
-
+							else: print("Unable to find garage with ID: %s"%args[1])#Error message
+					else: print("Invalid number of arguments: %s given, 1 expected." % len(args))#Error message
+				else: print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])#Error message
+			else: print("Invalid number of arguments: %s given, 2 expected." % len(args)) #Error message
+		#Check selected items
 		case "hand":
-			sc,sg = None,None
+			sc,sg = None,None #Display data variables of the selected objects
 			if selectedCar: sc = selectedCar.getLisencePlate()
 			if selectedGarage: sg = selectedGarage.getId()
 			print("Selected Car: %s" % sc)
 			print("Selected Garage: %s" % sg)
-
+		#Clear the screen
 		case "clear": clear()
-
+		#List either all cars or all garages
 		case "list":
-			if len(args) > 0:
+			if len(args) > 0: #Check for -c/-g flag
 				if args[0] == "-c":
-					print("PLATE","MODEL","BRAND","COLOUR",sep=10*" ")
+					#Cars
+					print("PLATE","MODEL","BRAND","COLOUR",sep=10*" ") #'Table' header
 					for car in CARS:
-						pla,mod,bra,col=car.getLisencePlate()[:14],car.getModel()[:14],car.getBrand()[:14],car.getColour()[:15]
-						print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="")
-					lx=54-len(str(len(CARS)))	
-					if lx%2 == 0: print("-"*int(lx/2),"%s TOTAL"%len(CARS),"-"*int(lx/2),sep="")
-					else: print("-"*int(lx/2),"%s TOTAL-"%len(CARS),"-"*int(lx/2),sep="")
+						pla,mod,bra,col=car.getLisencePlate()[:14],car.getModel()[:14],car.getBrand()[:14],car.getColour()[:15] #Truncate to account for limited space
+						print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="") #Loving the oneliners; some simple math to calculate the right whitespacing
+					lx=54-len(str(len(CARS))) #Amount of - characters for the footer row	
+					if lx%2 == 0: print("-"*int(lx/2),"%s TOTAL"%len(CARS),"-"*int(lx/2),sep="") #Either equally divide it in two
+					else: print("-"*int(lx/2),"%s TOTAL-"%len(CARS),"-"*int(lx/2),sep="") #Or shift the remainder to the righthand-side
 				elif args[0] == "-g":
+					#Garages
 					for garage in GARAGES:
-						print("%s: (%s/%s)"%(garage.getId(),garage.getCapacity(),garage.maxCapacity))
-				else:
-					print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])
-			else:
-				print("Invalid number of arguments: %s given, 1 expected." % len(args))
-
+						print("%s: (%s/%s)"%(garage.getId(),garage.getCapacity(),garage.maxCapacity)) #garage id: (used/max)
+				else: print("Invalid argument at position 1: %s given, expected -c or -g" %args[0]) #Error message
+			else: print("Invalid number of arguments: %s given, 1 expected." % len(args)) #Error message
+		#Selected garage info
 		case "ginfo":
-			if selectedGarage:
+			if selectedGarage: #Check if the user has selected a garage
 				print("Garage Info for ID: %s"%selectedGarage.getId())
 				print("Maximum Capacity  : %s"%selectedGarage.maxCapacity)
 				print("Used Capacity     : %s (%s%%)"%(selectedGarage.getCapacity(),int(selectedGarage.getCapacity()/selectedGarage.maxCapacity*100)))
 				print("Parked Cars       :")
 				print("PLATE","MODEL","BRAND","COLOUR",sep=10*" ")
-				for car in sorted(selectedGarage.parkedCars,key=sf):
+				for car in sorted(selectedGarage.parkedCars,key=sf): #Same table as above (list case)
 					pla,mod,bra,col=car.getLisencePlate()[:14],car.getModel()[:14],car.getBrand()[:14],car.getColour()[:15]
 					print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="")
 				lx=54-len(str(len(selectedGarage.parkedCars)))	
@@ -155,7 +153,7 @@ while running:
 				else: print("-"*int(lx/2),"%s TOTAL-"%len(selectedGarage.parkedCars),"-"*int(lx/2),sep="")
 			else:
 				print("No garage selected")
-
+		#Selected car info
 		case "cinfo":
 			if selectedCar:
 				print("PLATE:    %s"%selectedCar.getLisencePlate())
@@ -164,43 +162,46 @@ while running:
 				print("COLOUR:   %s"%selectedCar.getColour())
 			else:
 				print("No car selected")
-
+		#Park the selected car in the selected garage
 		case "park":
-			if selectedCar:
-				if selectedGarage:
+			if selectedCar: #check if user selected a car
+				if selectedGarage: #check if user selected a garage
+					#CONFIRM choice
 					print("Trying to park car with plate: %s in garage with ID: %s. Type CONFIRM and press enter to continue."%(selectedCar.getLisencePlate(),selectedGarage.getId()))
 					c = input("> ").upper()
 					if c == "CONFIRM":
-						pt = selectedGarage.parkCar(selectedCar)
+						pt = selectedGarage.parkCar(selectedCar) #Parking logic handled by interactions.py. It returns a boolean (True if it was succesfull)
 						if pt:
 							print("Car with plate %s succesfully parked in garage with ID %s" %(selectedCar.getLisencePlate(),selectedGarage.getId()))
-						else:
+						else: #Check what the issue was
 							if selectedGarage.getCapacity() == selectedGarage.maxCapacity: print("Unable to park car: garage with ID %s is full" %selectedGarage.getId())
 							else: print("Unable to park car: lisence of car with plate %s is not valid" %selectedCar.getLisencePlate())
-					else:
-						print("Aborting.")
-				else:
-					print("No garage selected")
-			else:
-				print("No car selected")
-
+					else: print("Aborting.") #abort
+				else: print("No garage selected") #error msg
+			else: print("No car selected") #error msg
+		#Remove the selected car from the selected garage
 		case "unpark":
-			if selectedCar:
-				if selectedGarage:
-					if selectedCar in selectedGarage.parkedCars:
+			if selectedCar: #check if user selected a car
+				if selectedGarage: #check if user selected a garage
+					if selectedCar in selectedGarage.parkedCars: #Check if the car is in the specified garage
+						#CONFIRM choice
 						print("Trying to unpark car with plate: %s from garage with ID: %s. Type CONFIRM and press enter to continue."%(selectedCar.getLisencePlate(),selectedGarage.getId()))
 						c = input("> ").upper()
 						if c == "CONFIRM":
 							selectedGarage.unparkCar(selectedCar)
 							print("Car with plate %s succesfully removed from garage with ID %s" %(selectedCar.getLisencePlate(),selectedGarage.getId()))
-						else:
-							print("Aborting.")
-					else:
-						print("Unable to unpark car: car with plate %s is not parked in garage with ID %s"%(selectedCar.getLisencePlate(),selectedGarage.getId()))
-				else:
-					print("No garage selected")
-			else:
-				print("No car selected")
+						else: print("Aborting.") #abort
+					else: print("Unable to unpark car: car with plate %s is not parked in garage with ID %s"%(selectedCar.getLisencePlate(),selectedGarage.getId())) #error msg
+				else: print("No garage selected") #error msg
+			else: print("No car selected") #error msg
+		#Unknown command
+		case _: print("Unknown command: %s" % cmd)
 
-		case _:
-			print("Unknown command: %s" % cmd)
+####################################################
+#                POSSIBLE ADDITIONS                #
+#--------------------------------------------------#
+# - Currently parked info for each car             #
+# - Fancier garagelist                             #
+# - ASCII art logo screen                          #
+#                                                  #
+####################################################
