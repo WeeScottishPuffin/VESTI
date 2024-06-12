@@ -34,7 +34,7 @@ for garage in state["garages"]:
 
 #Give each car a lisence
 for car in CARS:
-	interface.Lisence(car, random.randint(0, len(GARAGES) - 1))
+	interface.Lisence(car, 2)
 
 #Greet the user and display a welcome message (Could add an MOTD like the old ARPA/INTER NET)
 if 12 > hour > 6: print("Доброе утро")
@@ -42,7 +42,6 @@ elif 18 > hour > 12: print("Добрый день")
 else: print("Добрый вечер")
 print("VESTI Parking Manager CLI version %s" % VERSION)
 print("By WeeScottishPuffin")
-time.sleep(3)
 
 #The sort function to sort cars by alphabetical order to make displaying them all easier
 def sf(car): return car.getLisencePlate()
@@ -143,3 +142,28 @@ while running:
 					print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])
 			else:
 				print("Invalid number of arguments: %s given, 1 expected." % len(args))
+
+		case "ginfo":
+			if selectedGarage:
+				print("Garage Info for ID: %s"%selectedGarage.getId())
+				print("Maximum Capacity  : %s"%selectedGarage.maxCapacity)
+				print("Used Capacity     : %s (%s%%)"%(selectedGarage.getCapacity(),int(selectedGarage.getCapacity()/selectedGarage.maxCapacity*100)))
+				print("Parked Cars       :")
+				print("PLATE","MODEL","BRAND","COLOUR",sep=10*" ")
+				for car in sorted(selectedGarage.parkedCars,key=sf):
+					pla,mod,bra,col=car.getLisencePlate()[:14],car.getModel()[:14],car.getBrand()[:14],car.getColour()[:15]
+					print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="")
+				lx=54-len(str(len(selectedGarage.parkedCars)))	
+				if lx%2 == 0: print("-"*int(lx/2),"%s TOTAL"%len(CARS),"-"*int(lx/2),sep="")
+				else: print("-"*int(lx/2),"%s TOTAL-"%len(CARS),"-"*int(lx/2),sep="")
+			else:
+				print("No garage selected")
+
+		case "cinfo":
+			if selectedCar:
+				print("PLATE:    %s"%selectedCar.getLisencePlate())
+				print("MODEL:    %s"%selectedCar.getModel())
+				print("BRAND:    %s"%selectedCar.getBrand())
+				print("COLOUR:   %s"%selectedCar.getColour())
+			else:
+				print("No car selected")

@@ -29,11 +29,12 @@ class Lisence:
     global idList
     self.uniqueId, self.id = curLisenceId, curLisenceId
     curLisenceId += 1
-    lisenceList[lisenceHolder] = self #Workaround
-    self.liscenceHolder = lisenceHolder
+    self.lisenceHolder = lisenceHolder
     self.validGarageId = validGarageId
+    lisenceList[lisenceHolder] = self #Workaround
 
   def getLisenceHolderPlate(self) -> Car:
+    print(self.lisenceHolder)
     return self.lisenceHolder.getLisencePlate()
 
   def getValidInGarageId(self) -> int:
@@ -48,13 +49,13 @@ class Garage:
     self.maxCapacity = maxCapacity
 
   def checkIfValid(self, car:Car, lisence:Lisence) -> bool:
-    return (len(self.parkedCars) < self.maxCapacity 
-           and lisence.getLisenceHolderPlate() == car 
+    return (self.getCapacity() < self.maxCapacity 
+           and lisence.getLisenceHolderPlate() == car.getLisencePlate() 
            and lisence.getValidInGarageId() == self.getId())
     
   def parkCar(self, car:Car) -> bool: #Return type is bool in the casus
     try:
-      if self.checkIfValid(car,lisenceList[car.lisencePlate]): 
+      if self.checkIfValid(car,lisenceList[car]): 
         self.parkedCars.append(car)
         return True
     except: pass
