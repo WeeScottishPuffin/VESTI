@@ -1,18 +1,30 @@
 import interactions as interface
-import time, os
+import time, os, random
 from sys import platform
 
+HELP={
+	"exit": "exit\n exits the program",
+	"help": "help [cmd]\n displays a help message for a given command, or a list of commands if none is given",
+	"select": "select {-c|-g} {lisenceplate|garageID}\n selects either a car by lisenceplate (-c) or a garage by ID (-g)",
+}
 CARS=[interface.Car("BAN ONE","Firebird (\'77)","Pontiac","Black"),
 	  interface.Car("LU 6789","DB5","Aston Martin","Silver"),
 	  interface.Car("XAB 235","Mustang (\'69)","Ford","Grey"),
 	  interface.Car("OUTATIME","DeLorean","DMC","Sliver"),
 	  interface.Car(" 1971 ","Duster 340 (\'71)","Plymouth","Green")
 ]
-GARAGES=[interface.Garage([],3)]
+GARAGES=[interface.Garage([],3),interface.Garage([],2)]
 gdict={}
 for garage in GARAGES: gdict[garage.getId()] = garage
+
+#Not specified how lisence instances should be instanced. COde below will iterate over the car list and create a lisence instance assigned to each car. For testing this can be modified. The lisences are not saved to a list as they should be evaluted as needed when parking cars. The distributed lisences are valid for a randomly chosen garage.
+
+for car in CARS:
+	interface.Lisence(car,random.randint(0,len(GARAGES)-1))
+	
 VERSION="1.0"
 hour = time.localtime()[3]
+running = True
 
 if 12 > hour > 6: print("Доброе утро")
 elif 18 > hour > 12: print("Добрый день")
@@ -25,96 +37,36 @@ def sf(car):return car.getLisencePlate()
 CARS.sort(key=sf)
 
 def clear():
-	if platform in ["linux","linux2","darwin"]:
-		# shell or zsh (I don't judge)
-		os.system("clear")
-	elif platform in ["win32","cygwin"]:
-		# msdos
-		os.system("cls")
+	match platform:
+		case "linux"|"linux2"|"darwin":
+			# shell or zsh (I don't judge)
+			os.system("clear")
+		case "win32"|"cygwin":
+			# msdos
+			os.system("cls")
 
-def menu():
-	choice=""
-	while choice not in ["1","2","q"]:
-		clear()
-		print('''1) View cars
-2) View Garages
-q) Quit''')
-		choice=input("> ").lower()
-	match choice:
-		case "1":
-			carview()
-		case "2":
-			garageview()
-		case "q":
+while running:
+	ioIN = input("> ").lower().split(" ")
+	cmd = ioIN[0]
+	args:list = ioIN[1:]
+
+	match cmd:
+		case "quit"|"exit":
+			running = False
 			print("До свидания!")
-			time.sleep(2)
-			quit()  
-       
+			time.sleep(1)
 
-def carview():
-	choice=""
-	while choice not in ["1","2","3"]:
-		clear()
-		print("Total unparked cars instanced: %s"%len(CARS))
-		print('''1) List cars
-2) Select car
-3) Back''')
-		choice=input("> ")
-	match choice:
-		case "1":
-			clear()
-			print("PLATE","MODEL","BRAND","COLOUR",sep=10*" ")
-			for car in CARS:
-				pla,mod,bra,col=car.getLisencePlate()[:14],car.getModel()[:14],car.getBrand()[:14],car.getColour()[:15]
-				print(pla,(15-len(pla))*" ",mod,(15-len(mod))*" ",bra,(15-len(bra))*" ",col,sep="")
-			print("--%s TOTAL --"%len(CARS))
-			print("Press ENTER to return to menu")
-			input()
-			carview()
-		case "2":
-			print("Lisence plate?")
-			plate=input("> ").upper()
-			selectedCar=None
-			for car in CARS:
-				if car.getLisencePlate().upper() == plate:
-					selectedCar = car
-			if selectedCar:
-				carinfo(selectedCar)
+		case "help":
+			if args:print(HELP[args[0]])
 			else:
-				print("Unable to find car!")
-				time.sleep(2)
-				carview()
-		case "3":
-			menu()
+				for msg in HELP.values(): print(msg,"\n")
 
-def carinfo(car):
-	choice=""
-	while choice not in ["1","2"]:
-		clear()
-		print("PLATE:    %s"%car.getLisencePlate())
-		print("MODEL:    %s"%car.getModel())
-		print("BRAND:    %s"%car.getBrand())
-		print("COLOUR:   %s\n"%car.getColour())
-		print("ACTIONS:")
-		print('''1) Park car
-2) Back''')
-		choice=input("> ")
-	match choice:
-		case "1":
-			garageChoice=-1
-			while garageChoice not in gdict.keys():
-				print("Which garage? (0-%s, c to cancel)"%max(gdict.keys()))
-				garageChoice = input(" >").lower()
-				if garageChoice == "c": carinfo(car)
-				try: garageChoice = int(garageChoice)
-				except: garageChoice = -1
-			if gdict[garageChoice].parkCar(car,interface.lisenceList[car]): 
-				print("Parked car in garage with ID: %s"%garageChoice)
-				CARS.remove(car)
-			else: 
-				print("Unable to park car in garage with ID: %s"%garageChoice)
-
-		case "2":
-			carview()
-if __name__ == "__main__":
-  menu()
+		case "select":
+			if args and len(args) > 1:
+				if args[0] == "-c":
+					#selecting a car by lisence
+					if args[1]:pass
+				elif args[0] == "-g":
+					pass
+				else:print("Invalid argument at position 1: %s given, expected -c or -g"%args[0]")
+			else:print("Invalid number of arguments: %s given, 2 expected."%len(args))
