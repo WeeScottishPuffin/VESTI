@@ -84,14 +84,30 @@ while running:
 					if args[1]: 
 						for car in CARS:
 							if car.getLisencePlate() == args[1]: 
-								selected = car
+								selectedCar = car
 								print("Succesfully selected car with lisence: %s"%args[1])
-								print(selected.__dict__) #temporary
-								break
+								print(selectedCar.__dict__) #temporary
+								break #To escape the for loop
 							print("Unable to find car with lisence: %s"%args[1])
+					else:
+						print("Invalid number of arguments: %s given, 1 expected." % len(args))
 								
 				elif args[0] == "-g":
-					pass
+					#Selecting a garage by ID
+					if args[1]:
+						try:
+							id = int(args[1])
+						except ValueError:
+							print("Invalid numerical ID: %s"%args[1])
+						else:
+							if id in gdict.keys():
+								selectedGarage = gdict[id]
+								print("Succesfully selected garage with ID: %s"%args[1])
+								print(selectedGarage.__dict__) #temporary
+							else:
+								print("Unable to find garage with ID: %s"%args[1])
+					else:
+						print("Invalid number of arguments: %s given, 1 expected." % len(args))
 				else:
 					print("Invalid argument at position 1: %s given, expected -c or -g" %args[0])
 			else:
