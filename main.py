@@ -3,12 +3,16 @@ import time, os, random, json
 from sys import platform
 
 HELP = {																					#Help messages
-    "exit":
-    "exit\n exits the program",
-    "help":
-    "help [cmd]\n displays a help message for a given command, or a list of commands if none is given",
-    "select":
-    "select {-c|-g} {lisenceplate|garageID}\n selects either a car by lisenceplate (-c) or a garage by ID (-g)",
+		"cinfo":"cinfo\n shows information about the currently selected car",
+		"clear":"clear\n clears the cli interface",
+    "exit":"exit\n exits the program",
+		"ginfo":"ginfo\n shows information about the currently selected garage",
+		"hand":"hand\n shows the currently selected car and garage",
+    "help":"help [cmd]\n displays a help message for a given command, or a list of commands if none is given",
+		"list":"list {-c|-g}\n lists all cars (-c) or all garages (-g)",
+		"park":"park\n parks the currently selected car in the currently selected garage",
+    "select":"select {-c|-g} {lisenceplate|garageID}\n selects either a car by lisenceplate (-c) or a garage by ID (-g)",
+		"unpark":"unpark\n unparks the currently selected car from the currently selected garage"
 }
 CARS = []																					#List of cars loaded from state.json
 GARAGES = []																			#List of garages, idem	
@@ -113,7 +117,6 @@ while running:
 			else:
 				print("Invalid number of arguments: %s given, 2 expected." % len(args))
 
-
 		case "hand":
 			sc,sg = None,None
 			if selectedCar: sc = selectedCar.getLisencePlate()
@@ -202,3 +205,6 @@ while running:
 					print("No garage selected")
 			else:
 				print("No car selected")
+
+		case _:
+			print("Unknown command: %s" % cmd)
