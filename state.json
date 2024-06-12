@@ -4,31 +4,36 @@
      "plate":"BAN ONE",
      "model":"Firebird ('77)",
      "brand":"Pontiac",
-     "colour":"Black"
+     "colour":"Black",
+     "lisenceNum":"2"
     },  
     {
      "plate":"LU 6789",
      "model":"DB5",
      "brand":"Aston Martin",
-     "colour":"Silver"
+     "colour":"Silver",
+     "lisenceNum":"2"
     },  
     {
      "plate":"XAB 235",
      "model":"Mustang ('69)",
      "brand":"Ford",
-     "colour":"Silver"
+     "colour":"Silver",
+     "lisenceNum":"2"
     },  
     {
      "plate":"OUTATIME",
      "model":"DeLorean",
      "brand":"DMC",
-     "colour":"Silver"
+     "colour":"Silver",
+     "lisenceNum":"2"
     },  
     {
      "plate":"1971",
      "model":"Duster 340 ('71)",
      "brand":"Plymouth",
-     "colour":"Green"
+     "colour":"Green",
+     "lisenceNum":"2"
     }
   ],
   "garages":[

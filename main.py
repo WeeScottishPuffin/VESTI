@@ -28,17 +28,13 @@ with open("state.json", "r") as f:
 
 #Save data from state.json to the lists
 for car in state["cars"]:
-	CARS.append(interface.Car(car["plate"].upper().replace(" ",""), car["brand"], car["model"], car["colour"]))
+	c = interface.Car(car["plate"].upper().replace(" ",""), car["brand"], car["model"], car["colour"])
+	CARS.append(c)
+	interface.Lisence(c, car["lisenceNum"])
 for garage in state["garages"]: 
 	n = interface.Garage([], garage["cap"])
 	GARAGES.append(n)
-	gdict[n.getId()] = n
-	
-##Not specified how lisence instances should be instanced. COde below will iterate over the car list and create a lisence instance assigned to each car. For testing this can be modified. The lisences are not saved to a list as they should be evaluted as needed when parking cars. The distributed lisences are valid for a randomly chosen garage. Might move it to state.json later.
-
-#Give each car a lisence
-for car in CARS:
-	interface.Lisence(car, 2)
+	gdict[n.getId()] = n	
 
 #Greet the user and display a welcome message (Could add an MOTD like the old ARPA/INTER NET)
 if 12 > hour > 6: print("Доброе утро")
