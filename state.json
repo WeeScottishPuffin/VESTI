@@ -37,8 +37,10 @@
     }
   ],
   "garages":[
-    {"cap":5},
-    {"cap":4},
-    {"cap":3}
-  ]
+    {"id":0,"cap":5,"parked":[]},
+    {"id":1,"cap":4,"parked":[]},
+    {"id":2,"cap":3,"parked":[]}
+  ],
+  "selectedCar":"1971",
+  "selectedGarage":2
 }

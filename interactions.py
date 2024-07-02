@@ -23,6 +23,15 @@ class Car:
   def getColour(self) -> str:
     return self.colour
 
+  def toJson(self) -> dict:
+    return {
+      "plate":self.getLisencePlate(),
+      "model":self.getModel(),
+      "brand":self.getBrand(),
+      "colour":self.getColour(),
+      "lisenceNum":lisenceList[self].getValidInGarageId()
+    }
+
 class Lisence:
   def __init__(self,lisenceHolder:Car,validGarageId:int) -> None:
     global curLisenceId
@@ -83,3 +92,10 @@ class Garage:
 
   def getCapacity(self) -> int:
     return len(self.parkedCars)
+
+  def toJson(self) -> dict:
+    return {
+      "id":self.getId(),
+      "cap":self.maxCapacity,
+      "parked":self.parkedCars
+    }
