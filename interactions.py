@@ -97,5 +97,5 @@ class Garage:
     return {
       "id":self.getId(),
       "cap":self.maxCapacity,
-      "parked":self.parkedCars
+      "parked":[c.toJson() for c in self.parkedCars]
     }
