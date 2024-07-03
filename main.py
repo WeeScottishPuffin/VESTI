@@ -69,7 +69,7 @@ def putJsonData():
         "selectedGarage":selectedGarage.getId() if selectedGarage else None
     }
 
-    with open("state,json","w") as state:
+    with open("state.json","w") as state:
         json.dump(jsonObj,state)
 
 getJsonData()
